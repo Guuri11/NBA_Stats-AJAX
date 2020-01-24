@@ -1,9 +1,5 @@
-// Objetos Equipos instanciados
-var lakers_obj, blazers_obj, rockets_obj;
-var base_datos_NBA_obj;
-var localStorageName = "Base de datos NBA";
-
 // EJECUCION DE LA APLICACION
+var equipo_obj;
 estadisticasNBA();
 
 // FUNCION PRINCIPAL
@@ -11,46 +7,35 @@ function estadisticasNBA(){
     let equipo = "";
     let equipo_seleccionado;
     $(document).ready(function() {
-
-        //Inicializacion
         equipo = $("a.activeTeam").attr('id');
+        //Inicializacion
+        $.get("nba_stats.php?select_team="+equipo, function(data, status){
+            equipo_obj = JSON.parse(data);
+            generarTabla(equipo);
+            //borrar();
+            buscador();
+            //anadirJugador();
+            //editarJugador();
+        });
 
-        //Control de creacion de Local Storage
-        if (localStorage.getItem(localStorageName)===null)
-            localStorage.setItem(localStorageName,base_datos_NBA);
-        // Objeto Equipo inicial parseado
-        base_datos_NBA_obj = JSON.parse(localStorage.getItem(localStorageName));
-        
-        generarTabla(equipo);
-        borrar();
-        buscador();
-        anadirJugador();
-        editarJugador();
-        
         //Escoger una tabla
         $('.equipo').on("click",function () {
-
-            $.get("nba_stats.php?q=klk", function(data, status){
-
-                alert("Data: " + data + "\nStatus: " + status);
-
-                objectes  = JSON.parse(data);
-            });
-
             equipo = escogerEquipo(this);
-            // Objeto Equipo parseado
-            base_datos_NBA_obj = JSON.parse(localStorage.getItem(localStorageName));
+            console.log(equipo);
             // Muestra en el html que equipo se ha solicitado
             $('.equipoSeleccionado').html(equipo);
             $('h3.equipoSeleccionado').html("Quinteto de los "+equipo);
 
-            // Carga la tabla y prepara las funciones a esta nueva tabla
-            generarTabla(equipo);
-            borrar();
-            buscador();
-            anadirJugador();
-            editarJugador();
-        });    
+            $.get("nba_stats.php?select_team="+equipo, function(data, status){
+                equipo_obj = JSON.parse(data);
+                // Carga la tabla y prepara las funciones a esta nueva tabla
+                generarTabla(equipo);
+                //borrar();
+                buscador();
+                //anadirJugador();
+                //editarJugador();
+            });
+        });
     });
 }
 
@@ -63,7 +48,6 @@ function anadirJugador(){
     $('#addJugador').unbind('click');   // Borra los eventos click cargados previamente
     $('#addJugador').click(function(){
         let equipo = $("a.activeTeam").attr('id');
-        console.log(equipo);
         var modalHTML  = $('#formPlayers').html();  // contiene el html del modal para reutilizarlo cada vez que lo abro
 
         $('#tituloForm').html('Añadir jugador de los '+equipo); // titulo del modal
@@ -74,7 +58,7 @@ function anadirJugador(){
         $('#sendData').click(function (event) {
             do {    // do-while(false)  para forzar a hacer solo una vez este proceso
                 let datos = [];
-                $('input.datos').each(function(index){ 
+                $('input.datos').each(function(index){
                     datos.push($(this).val());
                 });
 
@@ -124,7 +108,7 @@ function anadirJugador(){
                     generarTabla(equipo);
                     borrar();
                     buscador();
-                    editarJugador(); 
+                    editarJugador();
                 }else
                     alert("No se ha podido crear el jugador");
 
@@ -150,29 +134,29 @@ function editarJugador(){
         let equipo = $('a.activeTeam').attr('id');
         switch (equipo.toLowerCase()) {
             case "lakers":
-                    for (let index = 0; index <base_datos_NBA_obj.Lakers.length; index++) {
-                        if (base_datos_NBA_obj.Lakers[index].dorsal===dorsal) {
-                            jugador = base_datos_NBA_obj.Lakers[index];
-                        }
+                for (let index = 0; index <base_datos_NBA_obj.Lakers.length; index++) {
+                    if (base_datos_NBA_obj.Lakers[index].dorsal===dorsal) {
+                        jugador = base_datos_NBA_obj.Lakers[index];
                     }
+                }
                 break;
-    
+
             case "blazers":
-                    for (let index = 0; index < base_datos_NBA_obj.Blazers.length; index++) {
-                        if (base_datos_NBA_obj.Blazers[index].dorsal===dorsal) {
-                            jugador = base_datos_NBA_obj.Blazers[index];
-                        }
+                for (let index = 0; index < base_datos_NBA_obj.Blazers.length; index++) {
+                    if (base_datos_NBA_obj.Blazers[index].dorsal===dorsal) {
+                        jugador = base_datos_NBA_obj.Blazers[index];
                     }
-                    break;
-    
+                }
+                break;
+
             case "rockets":
-                    for (let index = 0; index < base_datos_NBA_obj.Rockets.length; index++) {
-                        if (base_datos_NBA_obj.Rockets[index].dorsal===dorsal) {
-                            jugador =  base_datos_NBA_obj.Rockets[index];
-                        }
+                for (let index = 0; index < base_datos_NBA_obj.Rockets.length; index++) {
+                    if (base_datos_NBA_obj.Rockets[index].dorsal===dorsal) {
+                        jugador =  base_datos_NBA_obj.Rockets[index];
                     }
-                    break;
-                    
+                }
+                break;
+
             default:
                 break;
         }
@@ -190,12 +174,12 @@ function editarJugador(){
         // Envio de datos
         $('#sendData').click(function () {
             let datos = [];
-            $('input.datos').each(function(index){ 
+            $('input.datos').each(function(index){
                 datos.push($(this).val());
             });
 
             if (validar(datos)) {
-                
+
                 // Asignar nuevos valores al jugador
                 jugador.dorsal=parseInt($('#dorsal').val());
                 jugador.nombre=$('#nombre').val();
@@ -218,14 +202,14 @@ function editarJugador(){
             }else
                 alert("No se ha podido editar el jugador");
 
-                // Reinicialiar valores de los campos
-                $('#formulario').trigger('reset');
+            // Reinicialiar valores de los campos
+            $('#formulario').trigger('reset');
 
-                //Cerramos modal
-                $('#formPlayers').modal('hide');
-                $('#formPlayers').on('hidden.bs.modal',function (e) {
-                    $(this).html(modalHTML);
-                });
+            //Cerramos modal
+            $('#formPlayers').modal('hide');
+            $('#formPlayers').on('hidden.bs.modal',function (e) {
+                $(this).html(modalHTML);
+            });
         });
     });
 }
@@ -248,7 +232,7 @@ function escogerEquipo(equipo) {
     // Escoger equipo seleccionado
     $(equipo).addClass("activeTeam");
     equipo = $(equipo).attr('id');
-    
+
     return equipo;
 }
 
@@ -274,36 +258,35 @@ function borrarDesdeBaseDatos(equipo, jugadorEliminado) {
      */
     switch (equipo) {
         case "Lakers":
-            console.log(equipo);
-                for (let index = 0; index <base_datos_NBA_obj.Lakers.length; index++) {
-                    if (base_datos_NBA_obj.Lakers[index].dorsal===jugadorEliminado) {
-                        base_datos_NBA_obj.Lakers.splice(index,1);
-                        base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                        localStorage.setItem(localStorageName,base_datos_NBA);
-                    }
+            for (let index = 0; index <base_datos_NBA_obj.Lakers.length; index++) {
+                if (base_datos_NBA_obj.Lakers[index].dorsal===jugadorEliminado) {
+                    base_datos_NBA_obj.Lakers.splice(index,1);
+                    base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
+                    localStorage.setItem(localStorageName,base_datos_NBA);
                 }
+            }
             break;
 
         case "Blazers":
-                for (let index = 0; index < base_datos_NBA_obj.Blazers.length; index++) {
-                    if (base_datos_NBA_obj.Blazers[index].dorsal===jugadorEliminado) {
-                        base_datos_NBA_obj.Blazers.splice(index,1);
-                        base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                        localStorage.setItem(localStorageName,base_datos_NBA);
-                    }
+            for (let index = 0; index < base_datos_NBA_obj.Blazers.length; index++) {
+                if (base_datos_NBA_obj.Blazers[index].dorsal===jugadorEliminado) {
+                    base_datos_NBA_obj.Blazers.splice(index,1);
+                    base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
+                    localStorage.setItem(localStorageName,base_datos_NBA);
                 }
-                break;
+            }
+            break;
 
         case "Rockets":
-                for (let index = 0; index < base_datos_NBA_obj.Rockets.length; index++) {
-                    if (base_datos_NBA_obj.Rockets[index].dorsal===jugadorEliminado) {
-                        base_datos_NBA_obj.Rockets.splice(index,1);
-                        base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                        localStorage.setItem(localStorageName,base_datos_NBA);
-                    }
+            for (let index = 0; index < base_datos_NBA_obj.Rockets.length; index++) {
+                if (base_datos_NBA_obj.Rockets[index].dorsal===jugadorEliminado) {
+                    base_datos_NBA_obj.Rockets.splice(index,1);
+                    base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
+                    localStorage.setItem(localStorageName,base_datos_NBA);
                 }
-                break;
-                
+            }
+            break;
+
         default:
             break;
     }
@@ -321,97 +304,23 @@ function buscador(){
 function generarTabla(equipo) {
     equipo = equipo.toLowerCase();
     var tabla='';
-    switch (equipo) {
-        case "lakers":
-            base_datos_NBA_obj.Lakers.forEach(jugador => {
-                tabla = tabla+'<tr name="'+jugador.dorsal+'">\n';
-                tabla = tabla+'\t<th scope="row" name="dorsalJugador">#'+jugador.dorsal+'</th>\n';
-                tabla = tabla+'\t<td scope="row" name="nombreJugador">'+jugador.nombre+'</td>\n';
-                tabla = tabla+'\t<td name="puntosJugador">'+jugador.pts+'</td>\n';
-                tabla = tabla+'\t<td name="rebotesJugador">'+jugador.reb+'</td>\n';
-                tabla = tabla+'\t<td name="asistenciasJugador">'+jugador.ast+'</td>\n';
-                tabla = tabla+'\t<td name="minutosJugador">'+jugador.min+'</td>\n';
-                tabla = tabla+'\t<td>\n';
-                tabla = tabla+'\t<div>\n';
-                tabla = tabla+'\t\t<button type ="button" class="btn btn-primary mb-2 w-50 material-icons editar" name="'+jugador.dorsal+'">edit</button>\n';
-                tabla = tabla+'\t</div>\n';
-                tabla = tabla+'\t<div>\n';
-                tabla = tabla+'\t\t<button type ="button" class="btn btn-danger w-50 material-icons borrar" name="'+jugador.dorsal+'">delete</button>\n';
-                tabla = tabla+'\t</div>\n';
-                tabla = tabla+'\t</td>\n';
-                tabla = tabla+'</tr>;'
-            });
-            
-            break;
-
-        case "blazers":{
-            base_datos_NBA_obj.Blazers.forEach(jugador => {
-                tabla = tabla+'<tr name="'+jugador.dorsal+'">\n';
-                tabla = tabla+'\t<th scope="row" name="dorsalJugador">#'+jugador.dorsal+'</th>\n';
-                tabla = tabla+'\t<td scope="row" name="nombreJugador">'+jugador.nombre+'</td>\n';
-                tabla = tabla+'\t<td name="puntosJugador">'+jugador.pts+'</td>\n';
-                tabla = tabla+'\t<td name="rebotesJugador">'+jugador.reb+'</td>\n';
-                tabla = tabla+'\t<td name="asistenciasJugador">'+jugador.ast+'</td>\n';
-                tabla = tabla+'\t<td name="minutosJugador">'+jugador.min+'</td>\n';
-                tabla = tabla+'\t<td>\n';
-                tabla = tabla+'\t<div>\n';
-                tabla = tabla+'\t\t<button type ="button" class="btn btn-primary mb-2 w-50 material-icons editar" name="'+jugador.dorsal+'">edit</button>\n';
-                tabla = tabla+'\t</div>\n';
-                tabla = tabla+'\t<div>\n';
-                tabla = tabla+'\t\t<button type ="button" class="btn btn-danger w-50 material-icons borrar" name="'+jugador.dorsal+'">delete</button>\n';
-                tabla = tabla+'\t</div>\n';
-                tabla = tabla+'\t</td>\n';
-                tabla = tabla+'</tr>;'
-            });
-
-            break;
-        }
-
-        case "rockets":{
-            base_datos_NBA_obj.Rockets.forEach(jugador => {
-                tabla = tabla+'<tr name="'+jugador.dorsal+'">\n';
-                tabla = tabla+'\t<th scope="row" name="dorsalJugador">#'+jugador.dorsal+'</th>\n';
-                tabla = tabla+'\t<td scope="row" name="nombreJugador">'+jugador.nombre+'</td>\n';
-                tabla = tabla+'\t<td name="puntosJugador">'+jugador.pts+'</td>\n';
-                tabla = tabla+'\t<td name="rebotesJugador">'+jugador.reb+'</td>\n';
-                tabla = tabla+'\t<td name="asistenciasJugador">'+jugador.ast+'</td>\n';
-                tabla = tabla+'\t<td name="minutosJugador">'+jugador.min+'</td>\n';
-                tabla = tabla+'\t<td>\n';
-                tabla = tabla+'\t<div>\n';
-                tabla = tabla+'\t\t<button type ="button" class="btn btn-primary mb-2 w-50 material-icons editar" name="'+jugador.dorsal+'">edit</button>\n';
-                tabla = tabla+'\t</div>\n';
-                tabla = tabla+'\t<div>\n';
-                tabla = tabla+'\t\t<button type ="button" class="btn btn-danger w-50 material-icons borrar" name="'+jugador.dorsal+'">delete</button>\n';
-                tabla = tabla+'\t</div>\n';
-                tabla = tabla+'\t</td>\n';
-                tabla = tabla+'</tr>;'
-            });
-
-            break;
-        }
-    
-        default:
-                lakers.forEach(jugador => {
-                    tabla = tabla+'<tr name="'+jugador.dorsal+'">\n';
-                    tabla = tabla+'\t<th scope="row" name="dorsalJugador">#'+jugador.dorsal+'</th>\n';
-                    tabla = tabla+'\t<td scope="row" name="nombreJugador">'+jugador.nombre+'</td>\n';
-                    tabla = tabla+'\t<td name="puntosJugador">'+jugador.pts+'</td>\n';
-                    tabla = tabla+'\t<td name="rebotesJugador">'+jugador.reb+'</td>\n';
-                    tabla = tabla+'\t<td name="asistenciasJugador">'+jugador.ast+'</td>\n';
-                    tabla = tabla+'\t<td name="minutosJugador">'+jugador.min+'</td>\n';
-                    tabla = tabla+'\t<td>\n';
-                    tabla = tabla+'\t<div>\n';
-                    tabla = tabla+'\t\t<button type ="button" class="btn btn-primary mb-2 w-50 material-icons editar" name="'+jugador.dorsal+'">edit</button>\n';
-                    tabla = tabla+'\t</div>\n';
-                    tabla = tabla+'\t<div>\n';
-                    tabla = tabla+'\t\t<button type ="button" class="btn btn-danger w-50 material-icons borrar" name="'+jugador.dorsal+'">delete</button>\n';
-                    tabla = tabla+'\t</div>\n';
-                    tabla = tabla+'\t</td>\n';
-                    tabla = tabla+'</tr>;'
-                });
-            
-            break;
-    }
-    
+        equipo_obj.forEach(jugador => {
+            tabla = tabla+'<tr name="'+jugador.dorsal+'">\n';
+            tabla = tabla+'\t<th scope="row" name="dorsalJugador">#'+jugador.dorsal+'</th>\n';
+            tabla = tabla+'\t<td scope="row" name="nombreJugador">'+jugador.nombre+'</td>\n';
+            tabla = tabla+'\t<td name="puntosJugador">'+jugador.pts+'</td>\n';
+            tabla = tabla+'\t<td name="rebotesJugador">'+jugador.reb+'</td>\n';
+            tabla = tabla+'\t<td name="asistenciasJugador">'+jugador.ast+'</td>\n';
+            tabla = tabla+'\t<td name="minutosJugador">'+jugador.min+'</td>\n';
+            tabla = tabla+'\t<td>\n';
+            tabla = tabla+'\t<div>\n';
+            tabla = tabla+'\t\t<button type ="button" class="btn btn-primary mb-2 w-50 material-icons editar" name="'+jugador.dorsal+'">edit</button>\n';
+            tabla = tabla+'\t</div>\n';
+            tabla = tabla+'\t<div>\n';
+            tabla = tabla+'\t\t<button type ="button" class="btn btn-danger w-50 material-icons borrar" name="'+jugador.dorsal+'">delete</button>\n';
+            tabla = tabla+'\t</div>\n';
+            tabla = tabla+'\t</td>\n';
+            tabla = tabla+'</tr>;'
+        });
     $('#tabla').html(tabla);
 }
