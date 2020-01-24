@@ -11,6 +11,7 @@ function estadisticasNBA(){
     let equipo = "";
     let equipo_seleccionado;
     $(document).ready(function() {
+
         //Inicializacion
         equipo = $("a.activeTeam").attr('id');
 
@@ -28,6 +29,14 @@ function estadisticasNBA(){
         
         //Escoger una tabla
         $('.equipo').on("click",function () {
+
+            $.get("nba_stats.php?q=klk", function(data, status){
+
+                alert("Data: " + data + "\nStatus: " + status);
+
+                objectes  = JSON.parse(data);
+            });
+
             equipo = escogerEquipo(this);
             // Objeto Equipo parseado
             base_datos_NBA_obj = JSON.parse(localStorage.getItem(localStorageName));
