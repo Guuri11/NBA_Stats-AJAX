@@ -12,13 +12,14 @@ function estadisticasNBA(){
         $.get("nba_stats.php?select_team="+equipo, function(data, status){
             equipo_obj = JSON.parse(data);
             generarTabla(equipo);
-            //borrar();
+            borrar();
             buscador();
             //anadirJugador();
             //editarJugador();
         });
 
         //Escoger una tabla
+        var x = document.querySelector('.equipo');
         $('.equipo').on("click",function () {
             equipo = escogerEquipo(this);
             console.log(equipo);
@@ -30,7 +31,7 @@ function estadisticasNBA(){
                 equipo_obj = JSON.parse(data);
                 // Carga la tabla y prepara las funciones a esta nueva tabla
                 generarTabla(equipo);
-                //borrar();
+                borrar();
                 buscador();
                 //anadirJugador();
                 //editarJugador();
@@ -251,45 +252,11 @@ function borrar() {
 }
 
 function borrarDesdeBaseDatos(equipo, jugadorEliminado) {
-    /**
-     * 1.-Buscara que coincida el jugador seleccionado(identificado por su dorsal) en objeto del equipo
-     * 2.-Lo borrara del objeto y luego se transformara en array almacenandose en la variable que contiene el formato JSON
-     * 3.-Almacena de nuevo la variable con formato JSON en el LocalStorage
-     */
-    switch (equipo) {
-        case "Lakers":
-            for (let index = 0; index <base_datos_NBA_obj.Lakers.length; index++) {
-                if (base_datos_NBA_obj.Lakers[index].dorsal===jugadorEliminado) {
-                    base_datos_NBA_obj.Lakers.splice(index,1);
-                    base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                    localStorage.setItem(localStorageName,base_datos_NBA);
-                }
-            }
-            break;
-
-        case "Blazers":
-            for (let index = 0; index < base_datos_NBA_obj.Blazers.length; index++) {
-                if (base_datos_NBA_obj.Blazers[index].dorsal===jugadorEliminado) {
-                    base_datos_NBA_obj.Blazers.splice(index,1);
-                    base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                    localStorage.setItem(localStorageName,base_datos_NBA);
-                }
-            }
-            break;
-
-        case "Rockets":
-            for (let index = 0; index < base_datos_NBA_obj.Rockets.length; index++) {
-                if (base_datos_NBA_obj.Rockets[index].dorsal===jugadorEliminado) {
-                    base_datos_NBA_obj.Rockets.splice(index,1);
-                    base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                    localStorage.setItem(localStorageName,base_datos_NBA);
-                }
-            }
-            break;
-
-        default:
-            break;
-    }
+    console.log('aqui entro');
+    $.ajax({
+        url:"nba_stats.php?select_team="+equipo+'&dorsal='+jugadorEliminado,
+        type:'get'
+    });
 }
 
 function buscador(){
