@@ -11,11 +11,11 @@ function estadisticasNBA(){
         //Inicializacion
         $.get("view.php?select_team="+equipo, function(data, status){
             equipo_obj = JSON.parse(data);
-            generarTabla(equipo);
+            generarTabla();
             borrar();
             buscador();
             anadirJugador();
-            //editarJugador();
+            editarJugador();
         });
 
         //Escoger una tabla
@@ -29,11 +29,11 @@ function estadisticasNBA(){
             $.get("view.php?select_team="+equipo, function(data, status){
                 equipo_obj = JSON.parse(data);
                 // Carga la tabla y prepara las funciones a esta nueva tabla
-                generarTabla(equipo);
+                generarTabla();
                 borrar();
                 buscador();
                 anadirJugador();
-                //editarJugador();
+                editarJugador();
             });
         });
     });
@@ -81,28 +81,19 @@ function anadirJugador(){
                         min:parseFloat(min)
                     }
 
-                    //Añadir jugador al array
+                    //Añadir jugador a la bbdd
                     equipo = $("a.activeTeam").attr('id');
-                    $.ajax({
-                        type: 'POST',
-                        url: 'create.php?select_team='+equipo,
-                        data: JSON.stringify(jugador),
-                        beforeSend: function () {
-                            console.log('Creando jugador...');
-                        },
-                        success: function (dato) {
-                            console.log(dato);
-                            console.log(jugador);
-                            console.log(JSON.stringify(jugador));
-                        },
-                        dataType: 'json'
-                    });
-
-                    // Añadir jugador a la tabla y funciones a la nueva tabla
-                    generarTabla(equipo);
-                    borrar();
-                    buscador();
-                    editarJugador();
+                    $.post('create.php?select_team='+equipo,
+                        jugador,
+                        function (data,status) {
+                            console.log(data)
+                            // Carga la tabla y prepara las funciones a esta nueva tabla
+                            generarTabla();
+                            borrar();
+                            buscador();
+                            anadirJugador();
+                            editarJugador();
+                        });
                 }else
                     alert("No se ha podido crear el jugador");
 
@@ -126,92 +117,74 @@ function editarJugador(){
 
         // Obtener objeto jugador
         let equipo = $('a.activeTeam').attr('id');
-        switch (equipo.toLowerCase()) {
-            case "lakers":
-                for (let index = 0; index <base_datos_NBA_obj.Lakers.length; index++) {
-                    if (base_datos_NBA_obj.Lakers[index].dorsal===dorsal) {
-                        jugador = base_datos_NBA_obj.Lakers[index];
-                    }
-                }
-                break;
+        $.get(
+            'update.php?select_team='+equipo+'&dorsal='+dorsal,
+            function (data,status) {
+                console.log(data);
+                jugador = JSON.parse(data);
+                console.log(jugador);
+                // Mostrar formulario y asignar valores del jugador a editar
+                $('#tituloForm').html('Editar a '+jugador.nombre); // titulo del modal
+                $('#nombre').val(jugador.nombre);
+                $('#pts').val(jugador.pts);
+                $('#reb').val(jugador.reb);
+                $('#asi').val(jugador.ast);
+                $('#min').val(jugador.min);
+                $('#dorsal').val(jugador.dorsal);
+                $('#formPlayers').modal('show');
 
-            case "blazers":
-                for (let index = 0; index < base_datos_NBA_obj.Blazers.length; index++) {
-                    if (base_datos_NBA_obj.Blazers[index].dorsal===dorsal) {
-                        jugador = base_datos_NBA_obj.Blazers[index];
-                    }
-                }
-                break;
+                // Envio de datos
+                $('#sendData').click(function () {
+                    let datos = [];
+                    $('input.datos').each(function(index){
+                        datos.push($(this).val());
+                    });
 
-            case "rockets":
-                for (let index = 0; index < base_datos_NBA_obj.Rockets.length; index++) {
-                    if (base_datos_NBA_obj.Rockets[index].dorsal===dorsal) {
-                        jugador =  base_datos_NBA_obj.Rockets[index];
-                    }
-                }
-                break;
+                    if (validar(datos)) {
 
-            default:
-                break;
-        }
+                        // Asignar nuevos valores al jugador
+                        jugador.dorsal=parseInt($('#dorsal').val());
+                        jugador.nombre=$('#nombre').val();
+                        jugador.pts=parseFloat($('#pts').val());
+                        jugador.reb=parseFloat($('#reb').val());
+                        jugador.ast=parseFloat($('#asi').val());
+                        jugador.min=parseFloat($('#min').val());
 
-        // Mostrar formulario y asignar valores del jugador a editar
-        $('#tituloForm').html('Editar a '+jugador.nombre); // titulo del modal
-        $('#nombre').val(jugador.nombre);
-        $('#pts').val(jugador.pts);
-        $('#reb').val(jugador.reb);
-        $('#asi').val(jugador.ast);
-        $('#min').val(jugador.min);
-        $('#dorsal').val(jugador.dorsal);
-        $('#formPlayers').modal('show');
+                        // Actualizar BBDD
+                        $.post('update.php?select_team='+equipo,
+                            jugador,
+                            function (data,status) {
+                                console.log(data)
+                                // Carga la tabla y prepara las funciones a esta nueva tabla
+                                generarTabla();
+                                borrar();
+                                buscador();
+                                anadirJugador();
+                                editarJugador();
+                            });
+                    }else
+                        alert("No se ha podido editar el jugador");
 
-        // Envio de datos
-        $('#sendData').click(function () {
-            let datos = [];
-            $('input.datos').each(function(index){
-                datos.push($(this).val());
-            });
+                    // Reinicialiar valores de los campos
+                    $('#formulario').trigger('reset');
 
-            if (validar(datos)) {
-
-                // Asignar nuevos valores al jugador
-                jugador.dorsal=parseInt($('#dorsal').val());
-                jugador.nombre=$('#nombre').val();
-                jugador.pts=parseFloat($('#pts').val());
-                jugador.reb=parseFloat($('#reb').val());
-                jugador.ast=parseFloat($('#asi').val());
-                jugador.min=parseFloat($('#min').val());
-
-                // Actualizar Local Storage
-                //Añadir jugador a la base de datos
-                let equipo = $("a.activeTeam").attr('id');
-                base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                localStorage.setItem(localStorageName,base_datos_NBA);
+                    //Cerramos modal
+                    $('#formPlayers').modal('hide');
+                    $('#formPlayers').on('hidden.bs.modal',function (e) {
+                        $(this).html(modalHTML);
+                    });
+                });
+            }
+        );
 
 
-                // Añadir jugador a la tabla y funciones a la nueva tabla
-                generarTabla(equipo);
-                borrar();
-                editarJugador();
-            }else
-                alert("No se ha podido editar el jugador");
-
-            // Reinicialiar valores de los campos
-            $('#formulario').trigger('reset');
-
-            //Cerramos modal
-            $('#formPlayers').modal('hide');
-            $('#formPlayers').on('hidden.bs.modal',function (e) {
-                $(this).html(modalHTML);
-            });
-        });
     });
 }
 
 function validar(datos){
     let validacion = true;
     for (let index = 0; index < datos.length; index++) {
-        if(datos[index] == null || datos[index]==""){
+        if(datos[index] == null || datos[index]===""){
             validacion = false;
         }
     }
@@ -251,8 +224,8 @@ function borrarDesdeBaseDatos(equipo, jugadorEliminado) {
         beforeSend: function () {
             console.log('borrando...');
         },
-        done: function (resultado) {
-            console.log(resultado)
+        success: function () {
+            console.log('Jugador borrado');
         }
     });
 }
@@ -266,8 +239,7 @@ function buscador(){
     });
 }
 
-function generarTabla(equipo) {
-    equipo = equipo.toLowerCase();
+function generarTabla() {
     var tabla='';
         equipo_obj.forEach(jugador => {
             tabla = tabla+'<tr name="'+jugador.dorsal+'">\n';

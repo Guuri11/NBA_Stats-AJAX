@@ -5,9 +5,6 @@ declare(strict_types=1);
 $db = new PDO('mysql: host=localhost;dbname=NBA','admin','admin');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-$stmt = $db->query('select * from Jugador where equipo = 1');
-$stmt->setFetchMode(PDO::FETCH_OBJ);
-
 if ($_SERVER['REQUEST_METHOD']==='GET' && array_key_exists('select_team',$_GET) && array_key_exists('dorsal',$_GET)){
     $equipo_query = strtolower(filter_input(INPUT_GET,'select_team',FILTER_SANITIZE_STRING));
     $dorsal = filter_input(INPUT_GET,'dorsal',FILTER_SANITIZE_NUMBER_INT);
