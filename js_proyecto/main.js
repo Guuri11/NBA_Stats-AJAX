@@ -9,12 +9,12 @@ function estadisticasNBA(){
     $(document).ready(function() {
         equipo = $("a.activeTeam").attr('id');
         //Inicializacion
-        $.get("nba_stats.php?select_team="+equipo, function(data, status){
+        $.get("view.php?select_team="+equipo, function(data, status){
             equipo_obj = JSON.parse(data);
             generarTabla(equipo);
             borrar();
             buscador();
-            //anadirJugador();
+            anadirJugador();
             //editarJugador();
         });
 
@@ -22,18 +22,17 @@ function estadisticasNBA(){
         var x = document.querySelector('.equipo');
         $('.equipo').on("click",function () {
             equipo = escogerEquipo(this);
-            console.log(equipo);
             // Muestra en el html que equipo se ha solicitado
             $('.equipoSeleccionado').html(equipo);
             $('h3.equipoSeleccionado').html("Quinteto de los "+equipo);
 
-            $.get("nba_stats.php?select_team="+equipo, function(data, status){
+            $.get("view.php?select_team="+equipo, function(data, status){
                 equipo_obj = JSON.parse(data);
                 // Carga la tabla y prepara las funciones a esta nueva tabla
                 generarTabla(equipo);
                 borrar();
                 buscador();
-                //anadirJugador();
+                anadirJugador();
                 //editarJugador();
             });
         });
@@ -46,8 +45,8 @@ function estadisticasNBA(){
 
 function anadirJugador(){
     //Mostrar modal
-    $('#addJugador').unbind('click');   // Borra los eventos click cargados previamente
-    $('#addJugador').click(function(){
+    //$('#addJugador').unbind('click');   // Borra los eventos click cargados previamente
+    $('#addJugador').unbind('click').click(function(){
         let equipo = $("a.activeTeam").attr('id');
         var modalHTML  = $('#formPlayers').html();  // contiene el html del modal para reutilizarlo cada vez que lo abro
 
@@ -84,26 +83,20 @@ function anadirJugador(){
 
                     //Añadir jugador al array
                     equipo = $("a.activeTeam").attr('id');
-                    switch (equipo.toLowerCase()) {
-                        case 'lakers':
-                            base_datos_NBA_obj.Lakers.push(jugador);
-                            base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                            localStorage.setItem(localStorageName,base_datos_NBA);
-                            break;
-                        case 'rockets':
-                            base_datos_NBA_obj.Rockets.push(jugador);
-                            base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                            localStorage.setItem(localStorageName,base_datos_NBA);
-                            break;
-                        case 'blazers':
-                            base_datos_NBA_obj.Blazers.push(jugador);
-                            base_datos_NBA = JSON.stringify(base_datos_NBA_obj);
-                            localStorage.setItem(localStorageName,base_datos_NBA);
-                            break;
-                        default:
-                            alert('Error al crear jugador');
-                            break;
-                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: 'create.php?select_team='+equipo,
+                        data: JSON.stringify(jugador),
+                        beforeSend: function () {
+                            console.log('Creando jugador...');
+                        },
+                        success: function (dato) {
+                            console.log(dato);
+                            console.log(jugador);
+                            console.log(JSON.stringify(jugador));
+                        },
+                        dataType: 'json'
+                    });
 
                     // Añadir jugador a la tabla y funciones a la nueva tabla
                     generarTabla(equipo);
@@ -252,10 +245,15 @@ function borrar() {
 }
 
 function borrarDesdeBaseDatos(equipo, jugadorEliminado) {
-    console.log('aqui entro');
     $.ajax({
-        url:"nba_stats.php?select_team="+equipo+'&dorsal='+jugadorEliminado,
-        type:'get'
+        url:"delete.php?select_team="+equipo+'&dorsal='+jugadorEliminado,
+        type:'get',
+        beforeSend: function () {
+            console.log('borrando...');
+        },
+        done: function (resultado) {
+            console.log(resultado)
+        }
     });
 }
 
