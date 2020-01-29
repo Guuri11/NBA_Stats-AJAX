@@ -86,7 +86,8 @@ function anadirJugador(){
                     $.post('create.php?select_team='+equipo,
                         jugador,
                         function (data,status) {
-                            console.log(data)
+                            console.log(data);
+                            equipo_obj.push(jugador);
                             // Carga la tabla y prepara las funciones a esta nueva tabla
                             generarTabla();
                             borrar();
@@ -154,13 +155,15 @@ function editarJugador(){
                         $.post('update.php?select_team='+equipo,
                             jugador,
                             function (data,status) {
-                                console.log(data)
-                                // Carga la tabla y prepara las funciones a esta nueva tabla
-                                generarTabla();
-                                borrar();
-                                buscador();
-                                anadirJugador();
-                                editarJugador();
+                                console.log(data);
+                                $.get("view.php?select_team="+equipo, function(data, status){
+                                    equipo_obj = JSON.parse(data);
+                                    generarTabla();
+                                    borrar();
+                                    buscador();
+                                    anadirJugador();
+                                    editarJugador();
+                                });
                             });
                     }else
                         alert("No se ha podido editar el jugador");

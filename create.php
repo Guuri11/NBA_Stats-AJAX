@@ -5,7 +5,7 @@ declare(strict_types=1);
 $db = new PDO('mysql: host=localhost;dbname=NBA','admin','admin');
 $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-if ($_SERVER['REQUEST_METHOD']==='GET' && array_key_exists('dorsal',$_GET)){
+if ($_SERVER['REQUEST_METHOD']==='POST'){
     $equipo_query = strtolower(filter_input(INPUT_GET,'select_team',FILTER_SANITIZE_STRING));
     switch ($equipo_query){
         case 'lakers':
