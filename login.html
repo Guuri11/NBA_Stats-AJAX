@@ -42,7 +42,7 @@
                   <div class="col-md-8 col-xl-6">
                       <div class="sub_header_social_icon float-right">
                         <a href="#"><i class="flaticon-phone"></i>+34 902 20 21 22</a>
-                        <a href="login.html" class="register_icon"><i class="ti-arrow-right"></i>INICIAR SESION</a>
+                        <a href="#" class="register_icon"><i class="ti-arrow-right"></i>INICIAR SESION</a>
                       </div>
                     </div>
                 </div>
@@ -104,125 +104,22 @@
     </header>
     <!-- Header part end-->
 
-    <section class="breadcrumb breadcrumb_bg">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="breadcrumb_iner">
-                        <div class="breadcrumb_iner_item">
-                            <h1>NBA STATS</h1>
-                            <p>Inicio<span>/</span><span id="breadcrumb_team" class="equipoSeleccionado">Lakers</span></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="container">
+        <h2>Login</h2><form action="" method="post">
+        <div class="form-group">
+            <label for="email" class="text-black">Email:</label>
+            <input type="email" class="form-control" id="email" placeholder="" name="email">
         </div>
-    </section>
-
-    <div class="container-fluid" id="navNBA">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-              <a class="nav-link activeTeam equipo" href="#navNBA" id="Lakers"><img src="img/lakers.png" width="80px" height="70px"></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link equipo" href="#navNBA"id="Blazers"><img src="img/blazers.png" width="80px" height="70px"></a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link equipo" href="#navNBA"id="Rockets"><img src="img/rockets.png" width="80px" height="70px"></a>
-            </li>
-          </ul>
-
+        <div class="form-group">
+            <label for="password" class="text-black">Contraseña:</label>
+            <input type="password" class="form-control" id="password" placeholder="" name="password">
+        </div>
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+        </div>
+        <hr/>
+    </form>
     </div>
-
-    
-
-    <!--Inicio tabla-->
-
-    <div class="section-top-border container">
-        <!--Fin buscador-->
-        <h3 class="mb-30 equipoSeleccionado">Quinteto de los Lakers</h3>
-        <!--Buscador-->
-        <div class="section-top-border container w-100">
-            <form class="form-inline md-form form-sm">
-                <input class="form-control form-control-sm mr-3 w-75" type="text" id="search" placeholder="Search"
-                aria-label="Search">
-                <i class="fas fa-search" aria-hidden="true"></i>
-                <button class="material-icons botonAnadir ml-3" id="addJugador">person_add</button>
-            </form>
-        </div>
-        <!--Fin buscador-->
-        <div>
-            <div class="progress-table">
-                <table class="table mt-3">
-                    <thead class="table">
-                        <tr>
-                            <th scope="col">Dorsal</a></th>
-                            <th scope="col">Nombre</a></th>
-                            <th scope="col">Puntos</a></th>
-                            <th scope="col">Rebotes</a></th>
-                            <th scope="col">Asistencias</a></th>
-                            <th scope="col">Minutos</a></th>
-                            <th scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla">
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <!--Fin de tabla-->
-
-    <!--Modal Formulario-->
-    <div class="modal fade" id="formPlayers" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-            <h5 class="modal-title" id="tituloForm">Añadir jugador de Los Angeles Lakers</h5>
-            <h6 class="modal-title" id="response"></h6>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            </div>
-            <div class="modal-body">
-                <form id="formulario" method="POST" action="index.html">
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">Nombre:</label>
-                        <input type="text" class="form-control datos" id="nombre" >
-                    </div>
-                    <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Puntos:</label>
-                            <input type="number" step=".01" min="0" class="form-control datos" id="pts" >
-                    </div>
-                    <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Rebotes:</label>
-                            <input type="number" step=".01" min="0" class="form-control datos" id="reb" >
-                    </div>
-                    <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Asistencias:</label>
-                            <input type="number" step=".01" min="0" class="form-control datos" id="asi" >
-                    </div>
-                    <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Minutos:</label>
-                            <input type="number" step=".01" min="0" class="form-control datos" id="min" >
-                    </div>
-                    <div class="form-group">
-                            <label for="recipient-name" class="col-form-label">Dorsal:</label>
-                            <input type="number" step="1" min="0" max="100" class="form-control datos" id="dorsal" >
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary re" id="sendData" data-dismiss="modal">Enviar</button>
-            </div>
-        </div>
-        </div>
-    </div>
-
-    <!--Fin Modal Formilario-->
-
 
     <!-- social_connect_part part start-->
     <section class="social_connect_part">
