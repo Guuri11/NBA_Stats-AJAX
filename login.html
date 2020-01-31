@@ -104,22 +104,27 @@
     </header>
     <!-- Header part end-->
 
+    <!-- LOGIN -->
+
     <div class="container">
-        <h2>Login</h2><form action="" method="post">
-        <div class="form-group">
-            <label for="email" class="text-black">Email:</label>
-            <input type="email" class="form-control" id="email" placeholder="" name="email">
-        </div>
-        <div class="form-group">
-            <label for="password" class="text-black">Contraseña:</label>
-            <input type="password" class="form-control" id="password" placeholder="" name="password">
-        </div>
-        <div class="text-center mt-3">
-            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
-        </div>
-        <hr/>
-    </form>
+        <h2>Login</h2>
+        <form action="login.html" method="post" id="form">
+            <div class="form-group">
+                <label for="usuario" class="text-black">Email:</label>
+                <input type="text" class="form-control" id="usuario" placeholder="" name="usuario">
+            </div>
+            <div class="form-group">
+                <label for="password" class="text-black">Contraseña:</label>
+                <input type="password" class="form-control" id="password" placeholder="" name="password">
+            </div>
+            <div class="text-center mt-3">
+                <button type="button" class="btn btn-primary" id="submit">Iniciar sesión</button>
+            </div>
+            <hr/>
+        </form>
     </div>
+
+    <!-- FIN LOGIN -->
 
     <!-- social_connect_part part start-->
     <section class="social_connect_part">
@@ -290,7 +295,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <!-- custom js -->
     <script src="js/custom.js"></script>
     <!-- script de las funciones de la tabla-->
-    <script src="js_proyecto/main.js"></script>
+    <script src="js_proyecto/login.js"></script>
 </body>
 
 </html>
