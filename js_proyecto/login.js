@@ -19,7 +19,10 @@ $(document).ready(function () {
                     console.log('Enviando datos al servidor...')
                 },
                 success: function (data, status) {
-                    console.log(data)
+                    // Si no ha recibido un error guardar la sesion
+                    if (data){
+                        console.log(data);
+                    }
                 }
             });
         }else{
